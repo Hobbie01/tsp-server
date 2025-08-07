@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_USER=tspapp
+      - DB_PASSWORD=db@pptsp
+      - DB_NAME=tsp
+    networks:
+      - tsp-network
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tsp
+      MYSQL_USER: tspapp
+      MYSQL_PASSWORD: db@pptsp
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql_tsp/db_tsp.sql:/docker-entrypoint-initdb.d/db_tsp.sql
+    networks:
+      - tsp-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: tspapp
+      PMA_PASSWORD: db@pptsp
+    depends_on:
+      - db
+    networks:
+      - tsp-network
+
+volumes:
+  mysql_data:
+
+networks:
+  tsp-network:
+    driver: bridge 

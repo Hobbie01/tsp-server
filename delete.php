@@ -1,0 +1,8 @@
+<?php include "connect.php" ?>
+<?php
+// เตรียมคำสั่ง SQL สำหรับลบข้อมูล
+$stmt = $pdo->prepare("DELETE FROM news WHERE news_id=?");
+$stmt->bindParam(1, $_GET["news_id"]); // กำหนดค่าลงในตำแหน่ง ?
+if ($stmt->execute()) // เริ่มลบข้อมูล
+header("location: shownews.php"); // กลับไปแสดงผลหน้าข้อมูล
+?>
