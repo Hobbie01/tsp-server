@@ -111,16 +111,16 @@ function goToForm(formNumber, table1_id, hn, an) {
 
                                     <td class="align-middle text-end">
                                         <button onclick="goToForm(2, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
-                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 2">
-                                            <i class="fa fa-file-text"></i> Form2
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="แบบฟอร์มทบทวนปัจจัยการติดเชื้อในระบบทางเดินปัสสาวะที่สัมพันธ์ในการใส่สายสวนปัสสาว(CAUTI)">
+                                            <i class="fa fa-clipboard-check"></i> ทบทวนปัจจัย
                                         </button>
                                         <button onclick="goToForm(3, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
-                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 3">
-                                            <i class="fa fa-file-text"></i> Form3
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="เพิ่มการวินิจฉัยการติดเชื้อในระบบทางเดินปัสสาวะ(ต่อ)">
+                                            <i class="fa fa-plus-circle"></i> เพิ่มการวินิจฉัย
                                         </button>
                                         <button onclick="goToForm(4, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
-                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 4">
-                                            <i class="fa fa-file-text"></i> Form4
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="การวินิจฉัยการติดเชื้อในระบบทางเดินปัสสาวะ(ต่อ)">
+                                            <i class="fa fa-microscope"></i> ผลการตรวจ
                                         </button>
                                         <a href="edit_form1.php?table1_id=<?= $row["table1_id"] ?>"
                                             class="btn btn-outline-success px-3 py-2 me-2"><i
