@@ -40,7 +40,7 @@ function confirmDelete(tableg_id) { // ฟังก์ชันจะถูก�
                         <div class="col-3">
                             <div class="float-right">
                                 <a href="formg.php" class="btn btn-primary btn-lg active"
-                                    role="button" aria-pressed="true">เพิ่ม IN4</a>
+                                    role="button" aria-pressed="true">เพิ่มข้อมูล</a>
                             </div>
                         </div>
                     </div>
@@ -85,10 +85,10 @@ function confirmDelete(tableg_id) { // ฟังก์ชันจะถูก�
                                     <td>
                                         <p class="text-m font-weight-bold mb-0"><?= $row["g2"]; ?></p>
                                     </td>
-                                    <td class="align-middle">
+                                    <td class="align-middle text-end">
                                         <a href="edit_formg.php?tableg_id=<?= $row["tableg_id"] ?>"
-                                            class="btn btn-outline-success #fbfbfbpx-3 py-2"><i
-                                                class="fa fa-pencil">แก้ไข</i>
+                                            class="btn btn-outline-success px-3 py-2 me-2"><i
+                                                class="fa fa-pencil"></i> แก้ไข
                                         </a>
                                         <a href="#" onclick='confirmDelete(<?= $row["tableg_id"]?>)'
                                             class="btn btn-outline-danger px-3 py-2"><i class="fa fa-trash"></i> ลบ</a>

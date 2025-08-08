@@ -38,8 +38,8 @@ function confirmDelete(tablee1_id) { // ฟังก์ชันจะถูก�
                         </div>
                         <div class="col-2">
                             <div class="float-right">
-                                <!-- <a href="forme1.php" class="btn btn-primary btn-lg active"
-                                    role="button" aria-pressed="true">เพิ่ม</a> -->
+                                <a href="forme1.php" class="btn btn-primary btn-lg active me-2"
+                                    role="button" aria-pressed="true">เพิ่มข้อมูล</a>
                                     <a href="search_hne.php" class="btn btn-success" role="button"
                                     aria-pressed="true">ค้นหา</a>
                             </div>
@@ -96,10 +96,10 @@ function confirmDelete(tablee1_id) { // ฟังก์ชันจะถูก�
 
                                     </td>
 
-                                    <td class="align-middle">
+                                    <td class="align-middle text-end">
                                         <a href="edit_forme1.php?tablee1_id=<?= $row["tablee1_id"] ?>"
-                                            class="btn btn-outline-success #fbfbfbpx-3 py-2"><i
-                                                class="fa fa-pencil">แก้ไข</i>
+                                            class="btn btn-outline-success px-3 py-2 me-2"><i
+                                                class="fa fa-pencil"></i> แก้ไข
                                         </a>
 
                                         <a href="#" onclick='confirmDelete(<?= $row["tablee1_id"]?>)'

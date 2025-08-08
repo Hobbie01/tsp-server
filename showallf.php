@@ -39,7 +39,7 @@ function confirmDelete(tablef_id) { // ฟังก์ชันจะถูก�
                         <div class="col-2">
                             <div class="float-right">
                                 <a href="formf.php" class="btn btn-primary btn-lg active"
-                                    role="button" aria-pressed="true">เพิ่ม</a>
+                                    role="button" aria-pressed="true">เพิ่มข้อมูล</a>
                                    
                             </div>
                         </div>
@@ -87,7 +87,7 @@ function confirmDelete(tablef_id) { // ฟังก์ชันจะถูก�
                                             <?= $row["f2"]?></p>
 
                                     </td>
-                                    <td class="align-middle">
+                                    <td class="align-middle text-end">
                                         <a href="#" onclick='confirmDelete(<?= $row["tablef_id"]?>)'
                                             class="btn btn-outline-danger px-3 py-2"><i class="fa fa-trash"></i> ลบ</a>
                                     </td>

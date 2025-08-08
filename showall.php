@@ -13,12 +13,31 @@ include("sqlsrv_connect.php");
 ?>
 
 
+<style>
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .btn {
+        margin-bottom: 2px !important;
+        width: 100%;
+    }
+}
+</style>
+
 <script>
 function confirmDelete(table1_id) { // ฟังก์ชันจะถูกเรียกถ้าผู้ใช้คลิกที่ link ลบ
     var ans = confirm("ต้องการลบข้อมูลฟอร์มนี้ " + table1_id); // แสดงกล่องถามผู้ใช้
     if (ans == true) // ถ้าผู้ใช้กด OK จะเข้าเงื่อนไขนี้
         document.location = "delete_form1.php?table1_id=" + table1_id;
     //ส่งรหัสไปให้ไฟล์ delete.php
+}
+
+// เพิ่มฟังก์ชันสำหรับการนำทางไปยังฟอร์มต่างๆ
+function goToForm(formNumber, table1_id, hn, an) {
+    var url = 'form' + formNumber + '.php?table1_id=' + table1_id + '&hn=' + hn + '&an=' + an;
+    window.location.href = url;
 }
 </script>
 
@@ -35,8 +54,8 @@ function confirmDelete(table1_id) { // ฟังก์ชันจะถูก�
                         </div>
                         <div class="col-2">
                             <div class="float-right">
-                                <!-- <a href="form1.php" class="btn btn-primary btn-lg active"
-                                    role="button" aria-pressed="true">เพิ่ม</a> -->
+                                <a href="form1.php" class="btn btn-primary btn-lg active me-2"
+                                    role="button" aria-pressed="true">เพิ่มข้อมูล</a>
                                     <a href="search_hn.php" class="btn btn-success" role="button"
                                     aria-pressed="true">ค้นหา</a>
                             </div>
@@ -90,14 +109,25 @@ function confirmDelete(table1_id) { // ฟังก์ชันจะถูก�
 
                                     </td>
 
-                                    <td class="align-middle">
+                                    <td class="align-middle text-end">
+                                        <button onclick="goToForm(2, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 2">
+                                            <i class="fa fa-file-text"></i> Form2
+                                        </button>
+                                        <button onclick="goToForm(3, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 3">
+                                            <i class="fa fa-file-text"></i> Form3
+                                        </button>
+                                        <button onclick="goToForm(4, '<?= $row["table1_id"] ?>', '<?= $row["HN"] ?>', '<?= $row["AN"] ?>')"
+                                            class="btn btn-outline-success px-3 py-2 me-2" title="ไปยัง Form 4">
+                                            <i class="fa fa-file-text"></i> Form4
+                                        </button>
                                         <a href="edit_form1.php?table1_id=<?= $row["table1_id"] ?>"
-                                            class="btn btn-outline-success #fbfbfbpx-3 py-2"><i
-                                                class="fa fa-pencil">แก้ไข</i>
+                                            class="btn btn-outline-success px-3 py-2 me-2"><i
+                                                class="fa fa-pencil"></i> แก้ไข
                                         </a>
-
                                         <a href="#" onclick='confirmDelete(<?= $row["table1_id"]?>)'
-                                            class="btn btn-outline-danger px-3 py-2"><i class="fa fa-trash"></i> ลบ</a>
+                                            class="btn btn-outline-danger px-3 py-2 me-2"><i class="fa fa-trash"></i> ลบ</a>
                                     </td>
                                 </tr>
                                 <?php } //endwhile ?>

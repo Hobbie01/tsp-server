@@ -5,6 +5,12 @@ if (!isset($_SESSION["USER_ID"])) {
     header("Location: login/login.php"); // ถ้ายังไม่ได้เข้าสู่ระบบ ให้กลับไปที่หน้า login
     exit;
 }
+
+// รับพารามิเตอร์จาก URL
+$table1_id = isset($_GET['table1_id']) ? $_GET['table1_id'] : '';
+$hn = isset($_GET['hn']) ? $_GET['hn'] : '';
+$an = isset($_GET['an']) ? $_GET['an'] : '';
+
 include("header.php");
 include("sidebar.php");
 include("navbar.php");

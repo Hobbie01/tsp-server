@@ -49,8 +49,10 @@ isset($_POST['status2']) ? $status2 = $_POST['status2'] : $status2 = '';
 isset($_POST['st']) ? $st = $_POST['st'] : $st = '';
 isset($_POST['off']) ? $off = $_POST['off'] : $off = '';
 isset($_POST['other_in']) ? $other_in = $_POST['other_in'] : $other_in = '';
-isset($_POST['cauti']) ? $cauti = $_POST['cauti'] : $cauti = '';
-isset($_POST['non_cauti']) ? $non_cauti = $_POST['non_cauti'] : $non_cauti = '';
+isset($_POST['diagnosis_criteria']) ? $diagnosis_criteria = $_POST['diagnosis_criteria'] : $diagnosis_criteria = '';
+// แปลง diagnosis_criteria เป็น cauti และ non_cauti
+$cauti = ($diagnosis_criteria == '1') ? '1' : '';
+$non_cauti = ($diagnosis_criteria == '2') ? '1' : '';
 $timestamp = date('Y-m-d H:i:s');
 isset($timestamp) ? $timestamp = date('Y-m-d H:i:s') : $timestamp = '';
 

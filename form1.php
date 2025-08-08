@@ -11,41 +11,55 @@ include("navbar.php");
 include("connect.php");
 include("sqlsrv_connect.php");
 
-$PTUID=$_GET["PTUID"];
-//echo "<br>";
-$PTVUID=$_GET["PTVUID"];
-//echo "<br>";
-$PASID=$_GET["PASID"];
-//echo "<br>";
+$PTUID = isset($_GET["PTUID"]) ? $_GET["PTUID"] : '';
+$PTVUID = isset($_GET["PTVUID"]) ? $_GET["PTVUID"] : '';
+$PASID = isset($_GET["PASID"]) ? $_GET["PASID"] : '';
 
 
 
-$a = "SELECT
-dbo.vPatient.UID AS PTUID,
-dbo.PatientVisit.UID AS PTVUID,
-dbo.vPatient.PASID,
-(SELECT top 1 Identifier from PatientVisitID where PatientVisitID.PatientVisitUID = PatientVisit.UID ORDER BY UID DESC ) AS Visit_number,
-dbo.fGetRfValDescription(dbo.vPatient.TITLEUID) AS title,
-dbo.vPatient.Forename,
-dbo.vPatient.Surname,
-dbo.fGetRfValDescription(dbo.vPatient.SEXXXUID) AS Sex,
-datediff(year ,dbo.vPatient.BirthDttm,dbo.PatientVisit.StartDTTM) AS AgeOfVisit,
-CONVERT(VARCHAR(16), dbo.PatientVisit.StartDTTM, 120) AS VisitDate,
-dbo.fGetRfValDescription(PatientVisit.ENTYPUID) AS PatientType,
-dbo.fGetPatientWardName(dbo.PatientVisit.UID) AS WardName,
-dbo.fGetPatientBedName(dbo.PatientVisit.UID) AS BedName
+// สร้างข้อมูลเริ่มต้น
+$row = array(
+    'title' => '',
+    'Forename' => '',
+    'Surname' => '',
+    'AgeOfVisit' => '',
+    'PASID' => '',
+    'Visit_number' => ''
+);
 
-from
-PatientVisit
-JOIN vPatient On vPatient.UID = PatientVisit.PatientUID
-where 
-PASID  = '$PASID'
-AND PatientVisit.UID = '$PTVUID'
---dbo.PatientVisit.UID = '12733954'
-ORDER by PatientVisit.UID DESC";
-$aQuery = sqlsrv_query($conn,$a);
-while($row = sqlsrv_fetch_array($aQuery, SQLSRV_FETCH_ASSOC)){
- 
+// ถ้ามีพารามิเตอร์ ให้ดึงข้อมูลจาก database
+if($PASID && $PTVUID) {
+    $a = "SELECT
+    dbo.vPatient.UID AS PTUID,
+    dbo.PatientVisit.UID AS PTVUID,
+    dbo.vPatient.PASID,
+    (SELECT top 1 Identifier from PatientVisitID where PatientVisitID.PatientVisitUID = PatientVisit.UID ORDER BY UID DESC ) AS Visit_number,
+    dbo.fGetRfValDescription(dbo.vPatient.TITLEUID) AS title,
+    dbo.vPatient.Forename,
+    dbo.vPatient.Surname,
+    dbo.fGetRfValDescription(dbo.vPatient.SEXXXUID) AS Sex,
+    datediff(year ,dbo.vPatient.BirthDttm,dbo.PatientVisit.StartDTTM) AS AgeOfVisit,
+    CONVERT(VARCHAR(16), dbo.PatientVisit.StartDTTM, 120) AS VisitDate,
+    dbo.fGetRfValDescription(PatientVisit.ENTYPUID) AS PatientType,
+    dbo.fGetPatientWardName(dbo.PatientVisit.UID) AS WardName,
+    dbo.fGetPatientBedName(dbo.PatientVisit.UID) AS BedName
+
+    from
+    PatientVisit
+    JOIN vPatient On vPatient.UID = PatientVisit.PatientUID
+    where 
+    PASID  = '$PASID'
+    AND PatientVisit.UID = '$PTVUID'
+    ORDER by PatientVisit.UID DESC";
+    
+    $aQuery = sqlsrv_query($conn,$a);
+    if($aQuery) {
+        $result = sqlsrv_fetch_array($aQuery, SQLSRV_FETCH_ASSOC);
+        if($result) {
+            $row = $result;
+        }
+    }
+}
 ?>
 
 
@@ -202,7 +216,7 @@ button.ui-datepicker-trigger {
                     <h6> เพิ่มการวินิจฉัยการติดเชื้อในระบบทางเดินปัสสาวะ</h6>
                 </div>
                 <div class="card-body pb-2">
-                    <form role="form" action="insert_formb1.php" method="post">
+                    <form role="form" action="insert_form1.php" method="post">
                         <div class="row">
                             <div class="col-4">
                                 <div class="form-group">
@@ -251,7 +265,8 @@ button.ui-datepicker-trigger {
                                 <div class="col-4">
                                     <div class="form-group">
                                         <label for="name" class="formcontrol-label">AN</label>
-                                        <input class="form-control" type="text" name="an" id="an" placeholder="AN">
+                                        <input class="form-control" type="text" name="an" id="an" 
+                                            value="<?= $row['Visit_number']; ?>" placeholder="AN">
                                     </div>
                                 </div>
                             </div>
@@ -281,34 +296,19 @@ button.ui-datepicker-trigger {
     WHERE dbo.PatientProblem.PatientVisitUID = '$PTVUID' 
     AND dbo.fGetRfValDescription(dbo.PatientProblem.DIAGTYPUID) = 'PRINCIPAL DX (การวินิจฉัยโรคหลัก)'
     ";
+        $dxValue = '';
+    if($PTVUID) {
         $bQuery = sqlsrv_query($conn,$b);
-        // while($row_b = sqlsrv_fetch_array($bQuery, SQLSRV_FETCH_ASSOC)){
-        //     echo $row_b['PbName'];
-            
-
-            
-             ?>
-                                        <?php 
-                                    
-                                    if (sqlsrv_has_rows($bQuery)) {
-                                        // มีข้อมูล
-                                        while ($row_b = sqlsrv_fetch_array($bQuery, SQLSRV_FETCH_ASSOC)) {
-
-
-                                            // $date_c = $row_b['ClosureDttm'];
-                                            // $sqlDate_c = $date->format('Y-m-d H:i:s');
-                                        ?>
-
-                                        <input class="form-control" type="text" name="dx" id="dx"
-                                            value="<?= $row_b['PbName']; ?>" placeholder="DX">
-                                        <?php
-                                            
-                                        }
-                                    } else {
-                                    ?>
-                                        <input class="form-control" type="text" name="dx" id="dx" value=""
-                                            placeholder="DX">
-                                        <?php } ?>
+        if($bQuery && sqlsrv_has_rows($bQuery)) {
+            // มีข้อมูล
+            while ($row_b = sqlsrv_fetch_array($bQuery, SQLSRV_FETCH_ASSOC)) {
+                $dxValue = $row_b['PbName'];
+            }
+        }
+    }
+    ?>
+    <input class="form-control" type="text" name="dx" id="dx"
+        value="<?= $dxValue; ?>" placeholder="DX">
                                     </div>
                                 </div>
                                 <div class="col-6">
@@ -458,17 +458,13 @@ button.ui-datepicker-trigger {
 
                             <div class="card-body p-3">
                                 <div class="row">
-
                                     <div class="col-md-6 mb-md-0 mb-4">
-                                        <div
-                                            class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row m-0">
-
-                                            <div class="form-a">
+                                        <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row m-0 criteria-card" style="height: 200px;">
+                                            <div class="form-a w-100">
                                                 <h6 class="mb-2">เกณฑ์ต้องพิจารณาในการวินิจฉัย CAUTI</h6>
                                                 <div class="form-check">
-
                                                     <input class="form-check-input" type="radio" value="1" id="cauti"
-                                                        name="cauti">
+                                                        name="diagnosis_criteria">
                                                     <label class="form-check-label" for="cauti">
                                                         ผู้ป่วยใส่สายสวนปัสสาวะ > 2 วันปฏิทิน
                                                             หรือหลังถอดสายสวนปัสสาวะ<br>
@@ -477,17 +473,15 @@ button.ui-datepicker-trigger {
                                                             1)
                                                     </label>
                                                 </div>
-
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div
-                                            class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row">
-                                            <div class="form-check">
+                                        <div class="card card-body border card-plain border-radius-lg d-flex align-items-center flex-row criteria-card" style="height: 200px;">
+                                            <div class="form-check w-100">
                                                 <h6 class="mb-0">เกณฑ์ต้องพิจารณาในการวินิจฉัย Non-CAUTI</h6>
                                                 <input class="form-check-input" type="radio" value="2" id="non_cauti"
-                                                    name="non_cauti">
+                                                    name="diagnosis_criteria">
                                                 <label class="form-check-label" for="non_cauti">
                                                     ผู้ป่วยไม่ได้ใส่สายสวนปัสสาวะ
                                                         หรือใส่สายสวนปัสสาวะไม่เกิน 2
@@ -496,7 +490,6 @@ button.ui-datepicker-trigger {
                                                         (วันที่ใส่หรือสายสวนปัสสาวะให้นับเป็นวันที่ 1)
                                                 </label>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>
@@ -511,9 +504,6 @@ button.ui-datepicker-trigger {
 
                 </div>
             </div>
-
-
-            <?php } ?>
 
 
         </div>
@@ -651,6 +641,61 @@ $(function() {
         showOn: "both",
         langTh: true,
         yearTh: true,
+    });
+});
+
+// เพิ่ม CSS สำหรับ criteria cards
+$('<style>')
+    .prop('type', 'text/css')
+    .html(`
+        .criteria-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef !important;
+        }
+        
+        .criteria-card:hover {
+            border-color: #17a2b8 !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .criteria-card.selected {
+            border-color: #28a745 !important;
+            background-color: #f8fff9 !important;
+        }
+        
+        .criteria-card .form-check-input:checked + .form-check-label {
+            font-weight: bold;
+            color: #28a745;
+        }
+    `)
+    .appendTo('head');
+
+// JavaScript สำหรับการคลิกซ้ำเพื่อยกเลิกการเลือก
+$(document).ready(function() {
+    $('.criteria-card').on('click', function(e) {
+        // ป้องกันการ trigger เมื่อคลิกที่ radio button โดยตรง
+        if ($(e.target).is('input[type="radio"]') || $(e.target).is('label')) {
+            return;
+        }
+        
+        const radioButton = $(this).find('input[type="radio"]');
+        
+        // ถ้า radio button นี้ถูกเลือกอยู่แล้ว ให้ยกเลิกการเลือก
+        if (radioButton.is(':checked')) {
+            radioButton.prop('checked', false).trigger('change');
+        } else {
+            // ถ้ายังไม่ได้เลือก ให้เลือก
+            radioButton.prop('checked', true).trigger('change');
+        }
+    });
+    
+    // อัพเดท visual state เมื่อ radio button เปลี่ยน
+    $('input[name="diagnosis_criteria"]').on('change', function() {
+        $('.criteria-card').removeClass('selected');
+        if ($(this).is(':checked')) {
+            $(this).closest('.criteria-card').addClass('selected');
+        }
     });
 });
 </script>

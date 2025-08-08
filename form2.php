@@ -11,7 +11,12 @@ include("navbar.php");
 include("connect.php");
 include("sqlsrv_connect.php");
 
-$a = "select * from `table1` WHERE table1_id = '".$_GET['table1_id']."'  Order By table1_id DESC Limit 1";
+// รับพารามิเตอร์จาก URL
+$table1_id = isset($_GET['table1_id']) ? $_GET['table1_id'] : '';
+$hn = isset($_GET['hn']) ? $_GET['hn'] : '';
+$an = isset($_GET['an']) ? $_GET['an'] : '';
+
+$a = "select * from `table1` WHERE table1_id = '".$table1_id."'  Order By table1_id DESC Limit 1";
 $aQuery = mysqli_query($objCon,$a);
 while($row = mysqli_fetch_array($aQuery)){
 ?>
@@ -121,28 +126,28 @@ ul.typeahead.dropdown-menu li:last-child a {
                                                 <div class="col-4">
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">หอผู้ป่วย</label><br>
-                                                        <input class="typeahead" type="text" name="b1" id="b1" value="<?= $row["a1"]?>">
+                                                        <input class="typeahead" type="text" name="b1" id="b1" value="<?= isset($row["a1"]) ? $row["a1"] : '' ?>">
                                                     </div>
                                                 </div>
                                                 <div class="col-2">
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">คำนำหน้าชื่อ</label>
                                                         <input class="form-control" type="text" name="pname" id="pname"
-                                                        value="<?= $row["pname"]?>" placeholder="คำนำหน้าชื่อ">
+                                                        value="<?= isset($row["pname"]) ? $row["pname"] : '' ?>" placeholder="คำนำหน้าชื่อ">
                                                     </div>
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">ชื่อ</label>
                                                         <input class="form-control" type="text" name="fname"
-                                                            id="fname" value="<?= $row["fname"]?>" placeholder="ชื่อ">
+                                                            id="fname" value="<?= isset($row["fname"]) ? $row["fname"] : '' ?>" placeholder="ชื่อ">
                                                     </div>
                                                 </div>
                                                 <div class="col-3">
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">นามสกุล</label>
                                                         <input class="form-control" type="text" name="lname" id="lname"
-                                                        value="<?= $row["lname"]?>" placeholder="นามสกุล">
+                                                        value="<?= isset($row["lname"]) ? $row["lname"] : '' ?>" placeholder="นามสกุล">
                                                     </div>
                                                 </div>
                                             </div>
@@ -151,14 +156,14 @@ ul.typeahead.dropdown-menu li:last-child a {
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">HN</label>
                                                         <input class="form-control" type="text" name="b3" id="b3"
-                                                        value="<?= $row["HN"]?>"placeholder="HN">
+                                                        value="<?= isset($row["HN"]) ? $row["HN"] : '' ?>"placeholder="HN">
                                                     </div>
                                                 </div>
                                                 <div class="col-6">
                                                     <div class="form-group">
                                                         <label for="name" class="formcontrol-label">อายุ(ปี)</label>
                                                         <input class="form-control" type="text" name="b4" id="b4"
-                                                        value="<?= $row["age"]?>"placeholder="อายุ(ปี)">
+                                                        value="<?= isset($row["age"]) ? $row["age"] : '' ?>"placeholder="อายุ(ปี)">
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -199,17 +204,31 @@ ul.typeahead.dropdown-menu li:last-child a {
                                                             <label for="name"
                                                                 class="formcontrol-label">วันที่รับใหม่</label>
                                                                  <?php
-$datetime_a = $row['b9'];
-// แยกวันที่และเวลา
-list($date_a, $time_a) = explode(" ", $datetime_a);
-// แยกส่วนของปี เดือน วัน
-list($year_a, $month_a, $day_a) = explode("-", $date_a);
-// แปลง ค.ศ. → พ.ศ.
-$year_th_a = $year + 543;
-// ตัดเฉพาะ ชั่วโมง:นาที
-$time_short_a = substr($time_a, 0, 5);
-// รวมผลลัพธ์
-$formatted_a = "$day_a-$month_a-$year_th_a";// echo $formatted_a;  // แสดงผล: 09/07/2568 14:30
+$datetime_a = isset($row['b9']) ? $row['b9'] : '';
+$formatted_a = '';
+if (!empty($datetime_a)) {
+    // แยกวันที่และเวลา
+    $datetime_parts = explode(" ", $datetime_a);
+    $date_a = isset($datetime_parts[0]) ? $datetime_parts[0] : '';
+    $time_a = isset($datetime_parts[1]) ? $datetime_parts[1] : '';
+    
+    if (!empty($date_a)) {
+        // แยกส่วนของปี เดือน วัน
+        $date_parts = explode("-", $date_a);
+        $year_a = isset($date_parts[0]) ? $date_parts[0] : '';
+        $month_a = isset($date_parts[1]) ? $date_parts[1] : '';
+        $day_a = isset($date_parts[2]) ? $date_parts[2] : '';
+        
+        // แปลง ค.ศ. → พ.ศ.
+        $year_th_a = !empty($year_a) ? intval($year_a) + 543 : '';
+        
+        // ตัดเฉพาะ ชั่วโมง:นาที
+        $time_short_a = !empty($time_a) ? substr($time_a, 0, 5) : '';
+        
+        // รวมผลลัพธ์
+        $formatted_a = "$day_a-$month_a-$year_th_a";
+    }
+}
 ?>
 <input class="typeahead" type="text" name="b9" id="b9"  value="<?php echo $formatted_a; ?>"/>
                                                         </div>
@@ -219,19 +238,33 @@ $formatted_a = "$day_a-$month_a-$year_th_a";// echo $formatted_a;  // แสด�
                                                             <label for="name" class="formcontrol-label">วันที่ใส่
                                                                 F/C</label>
                                                                  <?php
-$datetime_b = $row['b10'];
-// แยกวันที่และเวลา
-list($date_b, $time_b) = explode(" ", $datetime_b);
-// แยกส่วนของปี เดือน วัน
-list($year_b, $month_b, $day_b) = explode("-", $date_b);
-// แปลง ค.ศ. → พ.ศ.
-$year_th_b = $year + 543;
-// ตัดเฉพาะ ชั่วโมง:นาที
-$time_short_b = substr($time_b, 0, 5);
-// รวมผลลัพธ์
-$formatted_b = "$day_b-$month_b-$year_th_b";// echo $formatted_b;  // แสดงผล: 09/07/2568 14:30
+$datetime_b = isset($row['b10']) ? $row['b10'] : '';
+$formatted_b = '';
+if (!empty($datetime_b)) {
+    // แยกวันที่และเวลา
+    $datetime_parts = explode(" ", $datetime_b);
+    $date_b = isset($datetime_parts[0]) ? $datetime_parts[0] : '';
+    $time_b = isset($datetime_parts[1]) ? $datetime_parts[1] : '';
+    
+    if (!empty($date_b)) {
+        // แยกส่วนของปี เดือน วัน
+        $date_parts = explode("-", $date_b);
+        $year_b = isset($date_parts[0]) ? $date_parts[0] : '';
+        $month_b = isset($date_parts[1]) ? $date_parts[1] : '';
+        $day_b = isset($date_parts[2]) ? $date_parts[2] : '';
+        
+        // แปลง ค.ศ. → พ.ศ.
+        $year_th_b = !empty($year_b) ? intval($year_b) + 543 : '';
+        
+        // ตัดเฉพาะ ชั่วโมง:นาที
+        $time_short_b = !empty($time_b) ? substr($time_b, 0, 5) : '';
+        
+        // รวมผลลัพธ์
+        $formatted_b = "$day_b-$month_b-$year_th_b";
+    }
+}
 ?>
-<input class="typeahead" type="text" name="b9" id="b9"  value="<?php echo $formatted_b; ?>"/>
+<input class="typeahead" type="text" name="b10" id="b10"  value="<?php echo $formatted_b; ?>"/>
                                                            
                                                         </div>
                                                     </div>
@@ -282,17 +315,31 @@ $formatted_b = "$day_b-$month_b-$year_th_b";// echo $formatted_b;  // แสด�
 
                                                             <div class="input-group date" id="id_2">
                                                                  <?php
-$datetime_c = $row['b17'];
-// แยกวันที่และเวลา
-list($date_c, $time_c) = explode(" ", $datetime_c);
-// แยกส่วนของปี เดือน วัน
-list($year_c, $month_c, $day_c) = explode("-", $date_c);
-// แปลง ค.ศ. → พ.ศ.
-$year_th_c = $year + 543;
-// ตัดเฉพาะ ชั่วโมง:นาที
-$time_short_c = substr($time_c, 0, 5);
-// รวมผลลัพธ์
-$formatted_c = "$day_c-$month_c-$year_th_c";// echo $formatted_c;  // แสดงผล: 09/07/2568 14:30
+$datetime_c = isset($row['b17']) ? $row['b17'] : '';
+$formatted_c = '';
+if (!empty($datetime_c)) {
+    // แยกวันที่และเวลา
+    $datetime_parts = explode(" ", $datetime_c);
+    $date_c = isset($datetime_parts[0]) ? $datetime_parts[0] : '';
+    $time_c = isset($datetime_parts[1]) ? $datetime_parts[1] : '';
+    
+    if (!empty($date_c)) {
+        // แยกส่วนของปี เดือน วัน
+        $date_parts = explode("-", $date_c);
+        $year_c = isset($date_parts[0]) ? $date_parts[0] : '';
+        $month_c = isset($date_parts[1]) ? $date_parts[1] : '';
+        $day_c = isset($date_parts[2]) ? $date_parts[2] : '';
+        
+        // แปลง ค.ศ. → พ.ศ.
+        $year_th_c = !empty($year_c) ? intval($year_c) + 543 : '';
+        
+        // ตัดเฉพาะ ชั่วโมง:นาที
+        $time_short_c = !empty($time_c) ? substr($time_c, 0, 5) : '';
+        
+        // รวมผลลัพธ์
+        $formatted_c = "$day_c-$month_c-$year_th_c";
+    }
+}
 ?>
 <input class="typeahead" type="text" name="date_infect" id="date_infect"  value="<?php echo $formatted_c; ?>"/>
                                                             </div>
