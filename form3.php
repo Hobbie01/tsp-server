@@ -18,6 +18,10 @@ include("connect.php");
 include("sqlsrv_connect.php");
 ?>
 
+<!-- SweetAlert2 -->
+<link href="./sweetalert/sweetalert2.min.css" rel="stylesheet">
+<script src="./sweetalert/sweetalert2.all.min.js"></script>
+
 <div class="container-fluid py-4">
     <div class="row">
         <div class="col-12">
@@ -281,10 +285,10 @@ include("sqlsrv_connect.php");
                         </div>
 
                         <div class="row mt-3">
-                            <div class="col-12">
+                            <div class="col-12 text-center">
                                 <div class="form-group">
                                 <input type="hidden" name="table1_id" id="table1_id" value="<?php echo $_GET["table1_id"];?>">
-                                    <button type="submit" class="btn bg-gradient-success px-3 py-2"><i
+                                    <button type="submit" id="submitBtn" class="btn bg-gradient-success px-3 py-2"><i
                                             class="fa fa-save"> บันทึก</i></button>
                                 </div>
                             </div>
@@ -295,6 +299,100 @@ include("sqlsrv_connect.php");
         </div>
     </div>
 </div>
+
+<script>
+function validateForm() {
+    // กลุ่มที่ 1: SUTI 1a : CAUTI (c1-c6)
+    const group1 = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+    const group1Checked = group1.some(id => document.getElementById(id).checked);
+    
+    // กลุ่มที่ 2: SUTI 1a : Non CAUTI (c7-c12)
+    const group2 = ['c7', 'c8', 'c9', 'c10', 'c11', 'c12'];
+    const group2Checked = group2.some(id => document.getElementById(id).checked);
+    
+    // กลุ่มที่ 3: SUTI 2 : CAUTI or Non CAUTI (c13-c19)
+    const group3 = ['c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19'];
+    const group3Checked = group3.some(id => document.getElementById(id).checked);
+    
+    // กลุ่มที่ 4: ผลตรวจเพาะเชื้อในปัสสาวะ (c20)
+    const group4Checked = document.getElementById('c20').checked;
+    
+    // กลุ่มที่ 5: ABUTI (c21, c22, c23 - ต้องเลือกครบทั้ง 3 ข้อ)
+    const group5 = ['c21', 'c22', 'c23'];
+    const group5AllChecked = group5.every(id => document.getElementById(id).checked);
+    
+    // ตรวจสอบเงื่อนไข:
+    // 1. ต้องเลือกอย่างน้อย 1 ข้อใน group 1, 2, หรือ 3
+    // 2. ถ้าเลือก group 1, 2, หรือ 3 ต้องเลือก group 4 ด้วย
+    // 3. หรือเลือก group 5 ครบทั้ง 3 ข้อ
+    
+    const hasSymptoms = group1Checked || group2Checked || group3Checked;
+    const validWithUrine = hasSymptoms && group4Checked;
+    const validABUTI = group5AllChecked;
+    
+    return validWithUrine || validABUTI;
+}
+
+function showValidationAlert(isValid, hasSymptoms, group4Checked, validABUTI) {
+    let message = '';
+    
+    if (!isValid) {
+        if (!hasSymptoms && !validABUTI) {
+            message = 'กรุณาเลือกอาการอย่างน้อย 1 ข้อจากหัวข้อ SUTI 1a (CAUTI หรือ Non CAUTI) หรือ SUTI 2 หรือเลือกครบทั้ง 3 ข้อใน ABUTI';
+        } else if (hasSymptoms && !group4Checked && !validABUTI) {
+            message = 'เมื่อเลือกอาการแล้ว กรุณาเลือก "ผลตรวจเพาะเชื้อในปัสสาวะ" ด้วย';
+        }
+        
+        if (message) {
+            // ใช้ SweetAlert2 หากมี หรือใช้ alert ธรรมดา
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'ข้อมูลไม่ครบถ้วน',
+                    text: message,
+                    confirmButtonText: 'ตกลง',
+                    confirmButtonColor: '#d33'
+                });
+            } else {
+                alert('ข้อมูลไม่ครบถ้วน\n\n' + message);
+            }
+        }
+    }
+}
+
+// เพิ่ม event listener ให้กับฟอร์ม
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        // ตรวจสอบค่าต่างๆ
+        const group1 = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6'];
+        const group1Checked = group1.some(id => document.getElementById(id).checked);
+        
+        const group2 = ['c7', 'c8', 'c9', 'c10', 'c11', 'c12'];
+        const group2Checked = group2.some(id => document.getElementById(id).checked);
+        
+        const group3 = ['c13', 'c14', 'c15', 'c16', 'c17', 'c18', 'c19'];
+        const group3Checked = group3.some(id => document.getElementById(id).checked);
+        
+        const group4Checked = document.getElementById('c20').checked;
+        
+        const group5 = ['c21', 'c22', 'c23'];
+        const group5AllChecked = group5.every(id => document.getElementById(id).checked);
+        
+        const hasSymptoms = group1Checked || group2Checked || group3Checked;
+        const validWithUrine = hasSymptoms && group4Checked;
+        const validABUTI = group5AllChecked;
+        const isValid = validWithUrine || validABUTI;
+        
+        if (!isValid) {
+            e.preventDefault(); // ป้องกันการส่งฟอร์ม
+            showValidationAlert(isValid, hasSymptoms, group4Checked, validABUTI);
+        }
+    });
+});
+</script>
+
 <?php
 include("footer.php");
 ?>

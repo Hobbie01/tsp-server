@@ -406,6 +406,321 @@ include("sqlsrv_connect.php");
 <script src="calendar-09/js/bootstrap-datetimepicker.min.js"></script>
 <script src="calendar-09/js/main.js"></script>
 <script src="calendar-09/js/main2.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ซ่อนฟิลด์ทั้งหมดในตอนเริ่มต้น
+    hideAllFields();
+    
+    // Culture section (d1)
+    document.getElementById('d1').addEventListener('change', function() {
+        toggleCultureFields(this.checked);
+        if (this.checked) {
+            // แสดง Culture section 2 เมื่อติ๊ก Culture section 1
+            toggleCultureSection2(true);
+        } else {
+            // ซ่อน Culture section 2 และ 3 เมื่อยกเลิก Culture section 1
+            toggleCultureSection2(false);
+            toggleCultureSection3(false);
+        }
+    });
+    
+    // Culture section 2 (d6)
+    document.getElementById('d6').addEventListener('change', function() {
+        toggleCultureFields2(this.checked);
+        if (this.checked) {
+            // แสดง Culture section 3 เมื่อติ๊ก Culture section 2
+            toggleCultureSection3(true);
+        } else {
+            // ซ่อน Culture section 3 เมื่อยกเลิก Culture section 2
+            toggleCultureSection3(false);
+        }
+    });
+    
+    // Culture section 3 (d11)
+    document.getElementById('d11').addEventListener('change', function() {
+        toggleCultureFields3(this.checked);
+    });
+    
+    // ATB for infection section (d17)
+    document.getElementById('d17').addEventListener('change', function() {
+        toggleATBFields(this.checked);
+    });
+    
+    // เมื่อกรอก Drug 1 แล้วให้แสดง Drug 2
+    document.getElementById('d18').addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+            toggleATBDrug2(true);
+        } else {
+            toggleATBDrug2(false);
+        }
+    });
+    
+    // เมื่อกรอก Drug 2 แล้วให้แสดง Drug 3
+    document.getElementById('d21').addEventListener('input', function() {
+        if (this.value.trim() !== '') {
+            toggleATBDrug3(true);
+        } else {
+            toggleATBDrug3(false);
+        }
+    });
+    
+    // True infection section (d28)
+    document.getElementById('d28').addEventListener('change', function() {
+        toggleTrueInfectionFields(this.checked);
+    });
+});
+
+function hideAllFields() {
+    // ซ่อนฟิลด์ Culture section 1
+    toggleCultureFields(false);
+    
+    // ซ่อน Culture section 2 ทั้งหมด (รวมปุ่ม Yes)
+    toggleCultureSection2(false);
+    
+    // ซ่อน Culture section 3 ทั้งหมด (รวมปุ่ม Yes)
+    toggleCultureSection3(false);
+    
+    // ซ่อนฟิลด์ ATB for infection
+    toggleATBFields(false);
+    toggleATBDrug2(false);
+    toggleATBDrug3(false);
+    
+    // ซ่อนฟิลด์ True infection
+    toggleTrueInfectionFields(false);
+}
+
+function toggleCultureFields(show) {
+    const fields = ['d2', 'd3', 'd4', 'd5'];
+    
+    // ซ่อน/แสดงเฉพาะฟิลด์ข้อมูล (col-5) ไม่ใช่ปุ่ม Yes (col-2)
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // ซ่อน/แสดง parent div ของฟิลด์ (col-5)
+            const fieldContainer = field.closest('.col-5');
+            if (fieldContainer) {
+                fieldContainer.style.display = show ? 'block' : 'none';
+            }
+            
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    // ซ่อนแถวที่มีเฉพาะ organism (แถวที่ 2)
+    const organismRow = document.getElementById('d4').closest('.row');
+    if (organismRow) {
+        organismRow.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function toggleCultureFields2(show) {
+    const fields = ['d7', 'd8', 'd9', 'd10'];
+    
+    // ซ่อน/แสดงเฉพาะฟิลด์ข้อมูล (col-5) ไม่ใช่ปุ่ม Yes (col-2)
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // ซ่อน/แสดง parent div ของฟิลด์ (col-5)
+            const fieldContainer = field.closest('.col-5');
+            if (fieldContainer) {
+                fieldContainer.style.display = show ? 'block' : 'none';
+            }
+            
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    // ซ่อนแถวที่มีเฉพาะ organism (แถวที่ 2)
+    const organismRow = document.getElementById('d9').closest('.row');
+    if (organismRow) {
+        organismRow.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function toggleCultureFields3(show) {
+    const fields = ['d12', 'd13', 'd14', 'd15'];
+    
+    // ซ่อน/แสดงเฉพาะฟิลด์ข้อมูล (col-5) ไม่ใช่ปุ่ม Yes (col-2)
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // ซ่อน/แสดง parent div ของฟิลด์ (col-5)
+            const fieldContainer = field.closest('.col-5');
+            if (fieldContainer) {
+                fieldContainer.style.display = show ? 'block' : 'none';
+            }
+            
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    // ซ่อนแถวที่มีเฉพาะ organism (แถวที่ 2)
+    const organismRow = document.getElementById('d14').closest('.row');
+    if (organismRow) {
+        organismRow.style.display = show ? 'flex' : 'none';
+    }
+}
+
+function toggleATBFields(show) {
+    // แสดงเฉพาะ Drug 1 และ Start/Off ของ Drug 1
+    const drug1Fields = ['d18', 'd19', 'd20'];
+    
+    drug1Fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            // สำหรับ d18 (Drug 1) ซ่อน/แสดง parent col-5
+            if (fieldId === 'd18') {
+                const fieldContainer = field.closest('.col-5');
+                if (fieldContainer) {
+                    fieldContainer.style.display = show ? 'block' : 'none';
+                }
+            }
+            
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    // แสดง/ซ่อนแถว Start/Off ของ Drug 1
+    const drug1StartOffRow = document.getElementById('d19').closest('.row');
+    if (drug1StartOffRow) {
+        drug1StartOffRow.style.display = show ? 'flex' : 'none';
+    }
+    
+    // ซ่อน Drug 2 และ 3 เมื่อปิดใช้งาน ATB
+    if (!show) {
+        toggleATBDrug2(false);
+        toggleATBDrug3(false);
+    }
+}
+
+function toggleATBDrug2(show) {
+    const drug2Fields = ['d21', 'd22', 'd23'];
+    
+    drug2Fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    const drug2Rows = [
+        document.getElementById('d21').closest('.row'),  // แถว Drug 2
+        document.getElementById('d22').closest('.row')   // แถว Start/Off ของ Drug 2
+    ];
+    
+    drug2Rows.forEach(row => {
+        if (row) {
+            row.style.display = show ? 'flex' : 'none';
+        }
+    });
+    
+    if (!show) {
+        toggleATBDrug3(false);
+    }
+}
+
+function toggleATBDrug3(show) {
+    const drug3Fields = ['d24', 'd25', 'd26'];
+    
+    drug3Fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    const drug3Rows = [
+        document.getElementById('d42').closest('.row'),  // แถว Drug 3 (d42 = d24)
+        document.getElementById('d25').closest('.row')   // แถว Start/Off ของ Drug 3
+    ];
+    
+    drug3Rows.forEach(row => {
+        if (row) {
+            row.style.display = show ? 'flex' : 'none';
+        }
+    });
+}
+
+function toggleCultureSection2(show) {
+    // ซ่อน/แสดง Culture section 2 ทั้งหมด (รวมปุ่ม Yes)
+    const section2Rows = [
+        document.getElementById('d6').closest('.row'),   // แถวที่มีปุ่ม Yes และ Specimen, Date
+        document.getElementById('d9').closest('.row')    // แถวที่มี Organism 1, 2
+    ];
+    
+    const fields = ['d6', 'd7', 'd8', 'd9', 'd10'];
+    
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    section2Rows.forEach(row => {
+        if (row) {
+            row.style.display = show ? 'flex' : 'none';
+        }
+    });
+}
+
+function toggleCultureSection3(show) {
+    // ซ่อน/แสดง Culture section 3 ทั้งหมด (รวมปุ่ม Yes)
+    const section3Rows = [
+        document.getElementById('d11').closest('.row'),  // แถวที่มีปุ่ม Yes และ Specimen, Date
+        document.getElementById('d14').closest('.row')   // แถวที่มี Organism 1, 2
+    ];
+    
+    const fields = ['d11', 'd12', 'd13', 'd14', 'd15'];
+    
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    section3Rows.forEach(row => {
+        if (row) {
+            row.style.display = show ? 'flex' : 'none';
+        }
+    });
+}
+
+function toggleTrueInfectionFields(show) {
+    const fields = ['d29', 'd30', 'd31', 'd32'];
+    
+    // ซ่อนเฉพาะแถวที่มีฟิลด์ข้อมูล (ไม่ใช่แถวที่มีปุ่ม Yes)
+    const dataRows = [
+        document.getElementById('d29').closest('.row'),  // แถว BT, RR, RP
+        document.getElementById('d32').closest('.row')   // แถว WBC
+    ];
+    
+    fields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+            field.disabled = !show;
+            if (!show) field.value = '';
+        }
+    });
+    
+    dataRows.forEach(row => {
+        if (row) {
+            row.style.display = show ? 'flex' : 'none';
+        }
+    });
+}
+</script>
+
 <?php
 include("footer.php");
 ?>
